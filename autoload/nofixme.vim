@@ -4,8 +4,8 @@
 " License: MIT License
 "
 
-let s:save_cpo = &cpo
-set cpo&vim
+let s:save_cpo = &cpoptions
+set cpoptions&vim
 
 function! nofixme#amount() abort
     redir => b:output
@@ -19,17 +19,17 @@ function! nofixme#amount() abort
         let b:count = 0
     endtry
 
-    return b:count == 0 ? '' : b:count . "XXX"
+    return b:count == 0 ? '' : b:count . 'XXX'
 endfunction
 
 function! nofixme#grep() abort
     try
-        exec '%s/\(FIXME\|TODO\|XXX\)//ng'
+        exec '%s/\(FIXME\|TODO\|XXX\|\\reference\|\\todo\|\\info\|\\fixme\|\\XXX\|\\unsure\)//ng'
     catch E486
         " Catch pattern not found
         return ''
     endtry
 endfunction
 
-let &cpo = s:save_cpo
+let &cpoptions = s:save_cpo
 unlet s:save_cpo
