@@ -1,5 +1,6 @@
 "
 " Filename: autoload/nofixme.vim
+" Author: Keith Miyake
 " Author: fisle
 " License: MIT License
 "
@@ -7,28 +8,26 @@
 let s:save_cpo = &cpoptions
 set cpoptions&vim
 
-function! nofixme#amount() abort
-    redir => b:output
-    silent call nofixme#grep()
-    redir END
+let s:tags = get(g:, 'nofixme_tags',
+      \ 'TODO\|FIXME\|XXX\|' .
+      \ '\\reference\|\\todo\|\\info\|\\fixme\|\\XXX\|\\unsure')
 
-    try
-        let b:count = split(b:output)[0]
-    catch E684
-        " If splitting fails, return 0
-        let b:count = 0
-    endtry
+function! nofixme#amount(...) abort
+  if !&modifiable
+      return ''
+  endif
 
-    return b:count == 0 ? '' : b:count . 'XXX'
+  let s:tag = get(a:, 1, s:tags)
+  let s:pos = stridx(s:tag, '\|')
+  let s:label = s:pos > -1 ? strpart(s:tag, 0, s:pos) : s:tag
+
+  return s:count(s:tag) . ' ' . s:label
 endfunction
 
-function! nofixme#grep() abort
-    try
-        exec '%s/\(FIXME\|TODO\|XXX\|\\reference\|\\todo\|\\info\|\\fixme\|\\XXX\|\\unsure\)//ng'
-    catch E486
-        " Catch pattern not found
-        return ''
-    endtry
+function! s:count(tag) abort
+  let s:c = []
+  call map(getline(0, line('$')), { k,v -> substitute(v, a:tag, '\=add(s:c, v)[-1]', 'g')})
+  return len(s:c)
 endfunction
 
 let &cpoptions = s:save_cpo
