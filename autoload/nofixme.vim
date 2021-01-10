@@ -22,7 +22,7 @@ function! nofixme#amount(...) abort
   let l:label = l:pos > -1 ? strpart(l:tag, 0, l:pos) : l:tag
   let l:label = substitute(l:label, '\\', '', 'g')
   let l:count = s:count(l:tag)
-  return l:count > 0 ? l:count . ' ' . l:label : ''
+  return l:count > 0 ? l:label . l:count : ''
 endfunction
 
 function! s:count(tag) abort
