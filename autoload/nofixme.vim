@@ -17,11 +17,12 @@ function! nofixme#amount(...) abort
       return ''
   endif
 
-  let s:tag = get(a:, 1, s:tags)
-  let s:pos = stridx(s:tag, '\|')
-  let s:label = s:pos > -1 ? strpart(s:tag, 0, s:pos) : s:tag
-
-  return s:count(s:tag) . ' ' . s:label
+  let l:tag = get(a:, 1, s:tags)
+  let l:pos = stridx(l:tag, '\|')
+  let l:label = l:pos > -1 ? strpart(l:tag, 0, l:pos) : l:tag
+  let l:label = substitute(l:label, '\\', '', 'g')
+  let l:count = s:count(l:tag)
+  return l:count > 0 ? l:count . ' ' . l:label : ''
 endfunction
 
 function! s:count(tag) abort
